@@ -1,0 +1,136 @@
+version: "2"
+
+run:
+  timeout: 3m
+  relative-path-mode: gomod
+  modules-download-mode: readonly
+  tests: true
+
+linters:
+  default: none
+  enable:
+    - copyloopvar
+    - cyclop
+    - depguard
+    - errcheck
+    - errorlint
+    - funlen
+    - gocognit
+    - gocritic
+    - gosec
+    - govet
+    - ineffassign
+    - intrange
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - revive
+    - sloglint
+    - staticcheck
+    - thelper
+    - tparallel
+    - unconvert
+    - unused
+    - usestdlibvars
+    - wastedassign
+    - whitespace
+    - wrapcheck
+
+  settings:
+    cyclop:
+      max-complexity: 12
+      package-average: 8.0
+
+    depguard:
+      rules:
+        main:
+          files:
+            - $all
+          deny:
+            - pkg: github.com/pkg/errors
+              desc: use errors or fmt.Errorf with %w
+            - pkg: io/ioutil
+              desc: deprecated since Go 1.16
+            - pkg: github.com/sirupsen/logrus
+              desc: use internal/logging based on slog
+            - pkg: go.uber.org/zap
+              desc: use internal/logging based on slog
+
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+
+    funlen:
+      lines: 80
+      statements: 45
+      ignore-comments: true
+
+    gocognit:
+      min-complexity: 15
+
+    govet:
+      enable:
+        - shadow
+
+    lll:
+      line-length: 120
+      tab-width: 1
+
+    nestif:
+      min-complexity: 4
+
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: file-length-limit
+          arguments:
+            - max: 400
+              skip-comments: true
+              skip-blank-lines: true
+        - name: package-comments
+          disabled: true
+
+    sloglint:
+      static-msg: true
+      msg-style: lowercased
+      context: scope
+
+  exclusions:
+    generated: strict
+    warn-unused: true
+    rules:
+      - path: _test\.go
+        linters:
+          - cyclop
+          - funlen
+          - gocognit
+          - gosec
+          - nestif
+          - wrapcheck
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+
+  settings:
+    gofumpt:
+      module-path: github.com/toheart/alert-demo/backend
+      extra-rules: true
+
+    goimports:
+      local-prefixes:
+        - github.com/toheart/alert-demo/backend
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

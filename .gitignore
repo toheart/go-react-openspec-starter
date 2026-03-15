@@ -1,0 +1,20 @@
+# Workspace ignores
+/backend/bin/
+/backend/cmd.exe
+/frontend/dist/
+/frontend/node_modules/
+/.tmpbin/
+
+# Logs and temp
+*.log
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+/openspec/changes/
