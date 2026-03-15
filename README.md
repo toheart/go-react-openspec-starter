@@ -73,6 +73,12 @@ The frontend dev server is available at `http://localhost:3000`.
   -ModuleBase github.com/acme/order-center
 ```
 
+```bash
+./scripts/init.sh \
+  --project-slug order-center \
+  --module-base github.com/acme/order-center
+```
+
 3. Review the generated metadata summary and rerun verification if needed:
 
 ```powershell
@@ -84,8 +90,28 @@ The frontend dev server is available at `http://localhost:3000`.
   -EnvPrefix ORDER_CENTER
 ```
 
+```bash
+./scripts/verify-template.sh \
+  --module-base github.com/acme/order-center \
+  --app-name order-center \
+  --display-name "Order Center" \
+  --frontend-package-name order-center-frontend \
+  --env-prefix ORDER_CENTER
+```
+
 See [TEMPLATE_USAGE.md](./TEMPLATE_USAGE.md) for the full template workflow and managed
 metadata files.
+
+If you want a full starter smoke copy, including `openspec/config.yaml` and `openspec/specs/`,
+run:
+
+```powershell
+.\scripts\smoke-starter.ps1
+```
+
+```bash
+./scripts/smoke-starter.sh
+```
 
 ## OpenSpec Baseline
 

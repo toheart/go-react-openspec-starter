@@ -22,6 +22,12 @@ Run the bootstrap script from the repository root:
   -ModuleBase github.com/your-org/your-project
 ```
 
+```bash
+./scripts/init.sh \
+  --project-slug your-project \
+  --module-base github.com/your-org/your-project
+```
+
 Optional inputs:
 
 - `-AppName`: override the default CLI and backend app name
@@ -61,6 +67,36 @@ run it directly:
   -FrontendPackageName your-project-frontend `
   -EnvPrefix YOUR_PROJECT
 ```
+
+```bash
+./scripts/verify-template.sh \
+  --module-base github.com/your-org/your-project \
+  --app-name your-project \
+  --display-name "Your Project" \
+  --frontend-package-name your-project-frontend \
+  --env-prefix YOUR_PROJECT
+```
+
+For a full starter smoke copy that includes backend, frontend, docs, and OpenSpec baseline files,
+run:
+
+```powershell
+.\scripts\smoke-starter.ps1 `
+  -ProjectSlug smoke-check `
+  -ModuleBase github.com/your-org/smoke-check `
+  -DisplayName "Smoke Check"
+```
+
+```bash
+./scripts/smoke-starter.sh \
+  --project-slug smoke-check \
+  --module-base github.com/your-org/smoke-check \
+  --display-name "Smoke Check"
+```
+
+The smoke script copies the publishable starter baseline into `.tmpbin/`, runs `init.ps1`,
+re-runs metadata verification, and confirms that `openspec/config.yaml` and `openspec/specs/`
+exist in the generated copy.
 
 ## 5. Start A Fresh OpenSpec Change
 

@@ -20,8 +20,8 @@ branch.
 
 - Run `go test ./...` under `backend/`.
 - Run `npm run build` under `frontend/`.
-- Run `.\scripts\verify-template.ps1` with the expected starter or project metadata values.
-- Smoke-test `.\scripts\init.ps1` in a fresh copy when changing managed metadata targets.
+- Run `.\scripts\verify-template.ps1` or `./scripts/verify-template.sh` with the expected starter or project metadata values.
+- Run `.\scripts\smoke-starter.ps1` or `./scripts/smoke-starter.sh` to validate the publishable starter copy, including OpenSpec baseline files.
 
 ## Handoff
 
