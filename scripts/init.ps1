@@ -55,6 +55,17 @@ function Update-FileContent {
     return $false
 }
 
+function Add-UpdatedFile {
+    param(
+        [System.Collections.Generic.List[string]]$List,
+        [string]$RelativePath
+    )
+
+    if (-not $List.Contains($RelativePath)) {
+        $List.Add($RelativePath)
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($AppName)) {
     $AppName = $ProjectSlug
 }
@@ -74,6 +85,14 @@ if ([string]::IsNullOrWhiteSpace($EnvPrefix)) {
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $backendModule = "$ModuleBase/backend"
 $shortDescription = "$DisplayName backend service"
+$backendGoModPath = Join-Path $repoRoot 'backend/go.mod'
+$backendGoModMatch = Select-String -Path $backendGoModPath -Pattern '(?m)^module\s+(.+)$'
+
+if ($null -eq $backendGoModMatch -or $backendGoModMatch.Matches.Count -eq 0) {
+    throw 'Unable to determine the current backend module path from backend/go.mod'
+}
+
+$currentBackendModule = $backendGoModMatch.Matches[0].Groups[1].Value.Trim()
 
 $managedFiles = @(
     'backend/go.mod',
@@ -88,6 +107,21 @@ $managedFiles = @(
 )
 
 $updatedFiles = New-Object System.Collections.Generic.List[string]
+
+if ($currentBackendModule -ne $backendModule) {
+    $backendSourceFiles = Get-ChildItem -Path (Join-Path $repoRoot 'backend') -Recurse -File |
+        Where-Object { $_.Extension -eq '.go' -or $_.Name -eq 'go.mod' }
+
+    foreach ($backendSourceFile in $backendSourceFiles) {
+        if (Update-FileContent -Path $backendSourceFile.FullName -Transform {
+                param($content)
+                [regex]::Replace($content, [regex]::Escape($currentBackendModule), $backendModule)
+            }) {
+            $relativePath = $backendSourceFile.FullName.Substring($repoRoot.Length + 1) -replace '\\', '/'
+            Add-UpdatedFile -List $updatedFiles -RelativePath $relativePath
+        }
+    }
+}
 
 $transformMap = @{
     'backend/go.mod' = {
@@ -146,7 +180,7 @@ foreach ($relativePath in $managedFiles) {
     }
 
     if (Update-FileContent -Path $absolutePath -Transform $transformMap[$relativePath]) {
-        $updatedFiles.Add($relativePath)
+        Add-UpdatedFile -List $updatedFiles -RelativePath $relativePath
     }
 }
 

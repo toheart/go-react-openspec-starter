@@ -124,6 +124,18 @@ fi
 short_description="${display_name} backend service"
 updated_files=()
 
+add_updated_file() {
+  local candidate="$1"
+  local existing=""
+  for existing in "${updated_files[@]}"; do
+    if [[ "$existing" == "$candidate" ]]; then
+      return
+    fi
+  done
+
+  updated_files+=("$candidate")
+}
+
 update_file() {
   local relative_path="$1"
   local perl_expr="$2"
@@ -140,9 +152,27 @@ update_file() {
   local after
   after="$(cat "$absolute_path")"
   if [[ "$before" != "$after" ]]; then
-    updated_files+=("$relative_path")
+    add_updated_file "$relative_path"
   fi
 }
+
+current_backend_module="$(sed -n 's/^module[[:space:]]\+//p' "${repo_root}/backend/go.mod" | head -n 1)"
+if [[ -z "$current_backend_module" ]]; then
+  echo "Unable to determine the current backend module path from backend/go.mod" >&2
+  exit 1
+fi
+
+if [[ "$current_backend_module" != "$backend_module" ]]; then
+  while IFS= read -r -d '' backend_source_file; do
+    relative_path="${backend_source_file#${repo_root}/}"
+    before="$(cat "$backend_source_file")"
+    perl -0pi -e "s{\Q${current_backend_module}\E}{${backend_module}}g" "$backend_source_file"
+    after="$(cat "$backend_source_file")"
+    if [[ "$before" != "$after" ]]; then
+      add_updated_file "$relative_path"
+    fi
+  done < <(find "${repo_root}/backend" -type f \( -name '*.go' -o -name 'go.mod' \) -print0)
+fi
 
 update_file "backend/go.mod" "s{^module\\s+.+\$}{module $backend_module}m"
 update_file "backend/Makefile" "s{^APP_NAME := .+\$}{APP_NAME := $app_name}m"

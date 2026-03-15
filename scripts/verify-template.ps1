@@ -30,6 +30,7 @@ function Test-Pattern {
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $backendModule = "$ModuleBase/backend"
 $starterSlug = 'go-react-openspec-starter'
+$starterBackendModule = 'github.com/toheart/go-react-openspec-starter/backend'
 $starterFrontendPackage = 'go-react-openspec-starter-frontend'
 $starterEnvPrefix = 'GO_REACT_OPENSPEC_STARTER'
 
@@ -66,20 +67,32 @@ $checks = @(
     }
 )
 
-$legacyPatterns = @(
+$backendSourceFiles = Get-ChildItem -Path (Join-Path $repoRoot 'backend') -Recurse -File |
+    Where-Object { $_.Extension -eq '.go' -or $_.Name -eq 'go.mod' } |
+    ForEach-Object { $_.FullName }
+
+$legacyChecks = @(
     @{
-        Description = 'legacy starter slug'
-        Pattern = $starterSlug
-        ShouldCheck = $AppName -ne $starterSlug -or $ModuleBase -ne "github.com/toheart/$starterSlug"
+        Description = 'legacy backend module path'
+        Pattern = $starterBackendModule
+        Paths = $backendSourceFiles
+        ShouldCheck = $backendModule -ne $starterBackendModule
     }
     @{
         Description = 'legacy frontend package'
         Pattern = $starterFrontendPackage
+        Paths = @(
+            Join-Path $repoRoot 'frontend/package.json'
+            Join-Path $repoRoot 'frontend/package-lock.json'
+        )
         ShouldCheck = $FrontendPackageName -ne $starterFrontendPackage
     }
     @{
         Description = 'legacy env prefix'
         Pattern = $starterEnvPrefix
+        Paths = @(
+            Join-Path $repoRoot 'backend/conf/conf.go'
+        )
         ShouldCheck = $EnvPrefix -ne $starterEnvPrefix
     }
 )
@@ -108,13 +121,13 @@ $metadataFiles = @(
     Join-Path $repoRoot 'frontend/index.html'
 )
 
-foreach ($legacy in $legacyPatterns) {
+foreach ($legacy in $legacyChecks) {
     if (-not $legacy.ShouldCheck) {
         Write-Host "PASS $($legacy.Description) (baseline value retained intentionally)"
         continue
     }
 
-    $matches = Select-String -Path $metadataFiles -Pattern $legacy.Pattern
+    $matches = Select-String -Path $legacy.Paths -Pattern ([regex]::Escape($legacy.Pattern))
     if ($matches) {
         $failures.Add("Found remaining $($legacy.Description) in managed metadata files")
         Write-Host "FAIL $($legacy.Description)"

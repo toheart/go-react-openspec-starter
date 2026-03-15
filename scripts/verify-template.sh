@@ -57,6 +57,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 backend_module="${module_base}/backend"
 starter_slug="go-react-openspec-starter"
+starter_backend_module="github.com/toheart/go-react-openspec-starter/backend"
 starter_frontend_package="go-react-openspec-starter-frontend"
 starter_env_prefix="GO_REACT_OPENSPEC_STARTER"
 
@@ -102,26 +103,46 @@ metadata_files=(
   "${repo_root}/frontend/index.html"
 )
 
-legacy_checks=(
-  "legacy starter slug|${starter_slug}|$([[ "$app_name" != "$starter_slug" || "$module_base" != "github.com/toheart/${starter_slug}" ]] && printf '1' || printf '0')"
-  "legacy frontend package|${starter_frontend_package}|$([[ "$frontend_package_name" != "$starter_frontend_package" ]] && printf '1' || printf '0')"
-  "legacy env prefix|${starter_env_prefix}|$([[ "$env_prefix" != "$starter_env_prefix" ]] && printf '1' || printf '0')"
-)
+mapfile -t backend_source_files < <(find "${repo_root}/backend" -type f \( -name '*.go' -o -name 'go.mod' \))
 
-for legacy_check in "${legacy_checks[@]}"; do
-  IFS='|' read -r description pattern should_check <<< "$legacy_check"
+check_legacy_pattern() {
+  local description="$1"
+  local pattern="$2"
+  local should_check="$3"
+  shift 3
+  local paths=("$@")
+
   if [[ "$should_check" == "0" ]]; then
     pass "${description} (baseline value retained intentionally)"
-    continue
+    return
   fi
 
-  if grep -Fq "$pattern" "${metadata_files[@]}"; then
+  if grep -Fq "$pattern" "${paths[@]}"; then
     fail "$description"
     failures+=("Found remaining ${description} in managed metadata files")
   else
     pass "$description"
   fi
-done
+}
+
+check_legacy_pattern \
+  "legacy backend module path" \
+  "${starter_backend_module}" \
+  "$([[ "$backend_module" != "$starter_backend_module" ]] && printf '1' || printf '0')" \
+  "${backend_source_files[@]}"
+
+check_legacy_pattern \
+  "legacy frontend package" \
+  "${starter_frontend_package}" \
+  "$([[ "$frontend_package_name" != "$starter_frontend_package" ]] && printf '1' || printf '0')" \
+  "${repo_root}/frontend/package.json" \
+  "${repo_root}/frontend/package-lock.json"
+
+check_legacy_pattern \
+  "legacy env prefix" \
+  "${starter_env_prefix}" \
+  "$([[ "$env_prefix" != "$starter_env_prefix" ]] && printf '1' || printf '0')" \
+  "${repo_root}/backend/conf/conf.go"
 
 if [[ "${#failures[@]}" -gt 0 ]]; then
   printf '\nVerification failed:\n'
