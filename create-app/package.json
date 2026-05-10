@@ -1,0 +1,32 @@
+{
+  "name": "create-go-react-app",
+  "version": "1.0.0",
+  "description": "Interactive CLI to scaffold Go + React full-stack projects with OpenSpec and AI Pipeline",
+  "type": "module",
+  "bin": {
+    "create-go-react-app": "./bin/create.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "start": "node bin/create.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/"
+  ],
+  "keywords": [
+    "create",
+    "scaffold",
+    "go",
+    "react",
+    "openspec",
+    "ai-pipeline",
+    "ddd"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.3.0",
+    "picocolors": "^1.1.0"
+  }
+}

@@ -1,0 +1,24 @@
+name: hotfix
+description: 热修复极简模板，跳过 propose 直接实现
+
+stages:
+  - name: implement
+    label: Implement
+    agent: backend-implementer
+
+  - name: code-review
+    label: Code Review
+    agent: backend-reviewer
+
+  - name: gate-code
+    label: "Gate: 代码"
+    gate: true
+    gate_description: "确认修复代码与测试"
+
+  - name: test
+    label: Test
+    agent: qa-tester
+
+  - name: archive
+    label: Archive
+    skill: openspec-archive

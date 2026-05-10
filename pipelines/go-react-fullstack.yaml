@@ -1,0 +1,61 @@
+name: go-react-fullstack
+description: Go + React 全栈编排模板，支持前后端并行实现与测试
+
+stages:
+  - name: propose
+    label: Propose
+    skill: openspec-propose
+
+  - name: test-design
+    label: Test Design
+    agent: test-designer
+    skip_when: small_change
+
+  - name: review
+    label: Review
+    parallel:
+      - agent: design-reviewer
+      - agent: test-reviewer
+
+  - name: gate-design
+    label: "Gate: 方案"
+    gate: true
+    gate_description: "确认方案设计与测试策略"
+
+  - name: implement
+    label: "BE ∥ FE"
+    parallel:
+      - agent: backend-implementer
+        scope: backend/
+        inject: [test-guides/unit.md]
+      - agent: frontend-implementer
+        scope: frontend/
+        inject: [test-guides/unit.md]
+
+  - name: code-review
+    label: Code Review
+    parallel:
+      - agent: backend-reviewer
+        scope: backend/
+      - agent: frontend-reviewer
+        scope: frontend/
+
+  - name: gate-code
+    label: "Gate: 代码"
+    gate: true
+    gate_description: "确认代码质量与单元测试覆盖"
+
+  - name: test-execution
+    label: Test
+    parallel:
+      - agent: subcutaneous-test-writer
+      - agent: e2e-tester
+
+  - name: gate-test
+    label: "Gate: 测试"
+    gate: true
+    gate_description: "确认全部测试结果"
+
+  - name: archive
+    label: Archive
+    skill: openspec-archive

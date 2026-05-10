@@ -1,0 +1,39 @@
+name: backend-only
+description: Go 纯后端编排模板
+
+stages:
+  - name: propose
+    label: Propose
+    skill: openspec-propose
+
+  - name: review
+    label: Review
+    agent: design-reviewer
+
+  - name: gate-design
+    label: "Gate: 方案"
+    gate: true
+    gate_description: "确认方案设计"
+
+  - name: implement
+    label: Implement
+    agent: backend-implementer
+    scope: backend/
+
+  - name: code-review
+    label: Code Review
+    agent: backend-reviewer
+    scope: backend/
+
+  - name: gate-code
+    label: "Gate: 代码"
+    gate: true
+    gate_description: "确认代码质量与测试覆盖"
+
+  - name: test
+    label: Test
+    agent: qa-tester
+
+  - name: archive
+    label: Archive
+    skill: openspec-archive
