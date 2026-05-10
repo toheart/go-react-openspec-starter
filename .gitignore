@@ -7,6 +7,8 @@
 /create-app/npm-cache/
 /.tmpbin/
 /.pipeline/
+/node_modules/
+/npm-cache/
 
 # Logs and temp
 *.log

@@ -23,18 +23,35 @@
 - Available templates: `go-react-fullstack`, `backend-only`, `hotfix`
 - Choose template based on change scope: fullstack for cross-cutting, backend-only for API changes, hotfix for urgent fixes
 
-## Skills
+## AI Pipeline 编排
 
-Skills (OpenSpec propose / apply / archive / explore 等) 由 `npx ai-pipeline init <adapter>` 根据所选 IDE 自动生成到对应目录：
+本项目使用 [ai-pipeline](https://github.com/toheart/ai-pipeline) 进行 AI 开发流水线编排。
 
-| IDE | Skill 目录 |
-|-----|-----------|
-| Cursor | `.cursor/skills/` |
-| Claude Code | `.claude/skills/` |
-| Codex | `.codex/skills/` |
+### 初始化（Skill 驱动，推荐）
 
-运行 `make init` 时选择 IDE 后会自动完成生成。如需手动生成：
+在 Cursor / Claude Code 中加载 `ai-pipeline` Skill，它会自动：
+1. 扫描项目技术栈（Go + React + OpenSpec）
+2. 生成 Agent 定义（explorer / go-implementer / frontend-implementer / reviewer）
+3. 生成 Orchestrator Skill
+4. 部署 Hook 和配置
+5. 启动 Pipeline Server + Dashboard
+
+### 初始化（CLI 向后兼容）
 
 ```bash
 npx ai-pipeline init cursor       # 或 claude-code / codex
+npx ai-pipeline serve              # 启动 Dashboard
 ```
+
+### 流水线使用
+
+初始化完成后，说"开始流水线"或"启动编排"触发 orchestrator-feature Skill。
+
+| IDE | Agent 目录 | Skill 目录 |
+|-----|-----------|-----------|
+| Cursor | `.cursor/agents/` | `.cursor/skills/` |
+| Claude Code | `.claude/agents/` | `.claude/skills/` |
+| Codex | `.codex/agents/` | `.codex/skills/` |
+
+- 流水线定义：`.pipeline/*.ts`
+- Dashboard：`http://127.0.0.1:19090/`
