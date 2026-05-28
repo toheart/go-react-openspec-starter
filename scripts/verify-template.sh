@@ -103,7 +103,10 @@ metadata_files=(
   "${repo_root}/frontend/index.html"
 )
 
-mapfile -t backend_source_files < <(find "${repo_root}/backend" -type f \( -name '*.go' -o -name 'go.mod' \))
+backend_source_files=()
+while IFS= read -r -d '' f; do
+  backend_source_files+=("$f")
+done < <(find "${repo_root}/backend" -type f \( -name '*.go' -o -name 'go.mod' \) -print0)
 
 check_legacy_pattern() {
   local description="$1"
@@ -144,7 +147,7 @@ check_legacy_pattern \
   "$([[ "$env_prefix" != "$starter_env_prefix" ]] && printf '1' || printf '0')" \
   "${repo_root}/backend/conf/conf.go"
 
-if [[ "${#failures[@]}" -gt 0 ]]; then
+if [[ "${failures[@]+set}" == "set" ]]; then
   printf '\nVerification failed:\n'
   for failure in "${failures[@]}"; do
     printf ' - %s\n' "$failure"

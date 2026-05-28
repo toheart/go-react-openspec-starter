@@ -137,7 +137,10 @@ if [[ ! -d "$openspec_specs_path" ]]; then
   exit 1
 fi
 
-mapfile -t spec_files < <(find "$openspec_specs_path" -type f -name 'spec.md')
+spec_files=()
+while IFS= read -r -d '' f; do
+  spec_files+=("$f")
+done < <(find "$openspec_specs_path" -type f -name 'spec.md' -print0)
 if [[ "${#spec_files[@]}" -eq 0 ]]; then
   echo "OpenSpec smoke check failed: no baseline spec files found in smoke copy." >&2
   exit 1

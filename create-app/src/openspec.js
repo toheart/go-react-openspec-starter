@@ -1,11 +1,11 @@
-import { writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 
 /**
  * 注入 OpenSpec config.yaml 的项目上下文
  */
 export async function injectOpenSpecContext(repoRoot, inputs) {
-  const configPath = resolve(repoRoot, 'openspec/config.yaml');
+  const configPath = resolve(repoRoot, "openspec/config.yaml");
 
   const content = `schema: spec-driven
 
@@ -23,11 +23,13 @@ rules:
     - Include affected DDD layers (domain / application / interfaces)
     - Reference relevant openspec/specs/ for style constraints
     - Include API endpoint changes in a summary table
+    - Include a "Ubiquitous Language" section listing new/changed domain terms with Chinese name, English name, definition, and DDD building block type
   tasks:
     - Each task should map to a single DDD layer change
     - Backend tasks must include test requirements
     - Frontend tasks must reference the API contract
+    - After all tasks are completed, update docs/ubiquitous-language.md with the new/changed terms from the proposal
 `;
 
-  await writeFile(configPath, content, 'utf-8');
+  await writeFile(configPath, content, "utf-8");
 }

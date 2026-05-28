@@ -66,6 +66,8 @@ my-project/
 │   ├── go-react-fullstack.yaml
 │   ├── backend-only.yaml
 │   └── hotfix.yaml
+├── docs/
+│   └── ubiquitous-language.md        # DDD 统一语言词汇表
 ├── create-app/                       # 交互式 CLI
 ├── scripts/                          # Shell 版初始化脚本（备用）
 └── .github/workflows/ci.yml

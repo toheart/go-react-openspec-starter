@@ -1,7 +1,7 @@
 .PHONY: init dev dev-backend dev-frontend check clean pipeline-serve pipeline-status
 
 init:
-	@cd create-app && node bin/create.js
+	@cd create-app && npm install --silent && node bin/create.js
 
 dev:
 	@echo "Starting backend (:8080) and frontend (:3000)..."

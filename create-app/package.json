@@ -7,13 +7,11 @@
     "create-go-react-app": "./bin/create.js"
   },
   "scripts": {
-    "build": "node scripts/build.js",
     "start": "node bin/create.js"
   },
   "files": [
     "bin/",
-    "src/",
-    "templates/"
+    "src/"
   ],
   "keywords": [
     "create",

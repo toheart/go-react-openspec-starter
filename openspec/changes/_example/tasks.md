@@ -27,3 +27,7 @@
 - [ ] 创建 `src/services/userApi.ts`（注册 API 调用）
 - [ ] 创建 `src/components/RegisterForm.tsx`（注册表单）
 - [ ] 在 `App.tsx` 中添加注册页路由
+
+## Ubiquitous Language 更新
+
+- [ ] 将 proposal 中的术语（User, Username, UserRepository, UserService, Register）同步到 `docs/ubiquitous-language.md` 的 User Context 分组

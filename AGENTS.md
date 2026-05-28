@@ -6,6 +6,14 @@
 - All new API endpoints must have corresponding handler tests
 - Frontend API calls go through `src/services/` layer, never call fetch directly in components
 
+### Ubiquitous Language（统一语言）
+- 项目统一语言词汇表维护在 `docs/ubiquitous-language.md`
+- 新增领域概念时，**必须先更新词汇表**，再编写代码
+- 代码命名（实体、值对象、服务、事件等）必须使用词汇表中定义的 English 名称
+- API 字段名、前端类型定义必须与词汇表保持一致
+- OpenSpec proposal 涉及新领域概念时，必须包含 `## Ubiquitous Language` 章节，列出新增/变更的术语
+- OpenSpec tasks 完成后，必须同步更新 `docs/ubiquitous-language.md`
+
 ### Code Style
 - Go: follow `openspec/specs/backend-go-style/spec.md`
 - TypeScript/React: follow `openspec/specs/frontend-typescript-style/spec.md`
