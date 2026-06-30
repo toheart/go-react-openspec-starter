@@ -1,11 +1,12 @@
 import * as p from '@clack/prompts';
 import pc from 'picocolors';
+import { basename } from 'node:path';
 
 function toDisplayName(slug) {
   return slug
     .split('-')
     .filter(Boolean)
-    .map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
     .join(' ');
 }
 
@@ -13,13 +14,43 @@ function toEnvPrefix(slug) {
   return slug.toUpperCase().replace(/-/g, '_');
 }
 
-export async function collectInputs() {
+function toSlug(dirName) {
+  return dirName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+/**
+ * 解析目标目录：优先使用命令行参数，否则交互式询问
+ */
+export async function resolveTargetDir(cliArg) {
+  if (cliArg) return cliArg;
+
+  const dirName = await p.text({
+    message: '项目目录名',
+    placeholder: 'my-project',
+    validate: (v) => {
+      if (!v) return '必填';
+      if (/[<>:"|?*]/.test(v)) return '包含非法字符';
+    },
+  });
+
+  if (p.isCancel(dirName)) {
+    p.cancel('操作已取消');
+    process.exit(0);
+  }
+
+  return dirName;
+}
+
+export async function collectInputs(projectDirName) {
+  const defaultSlug = toSlug(projectDirName);
+
   const group = await p.group(
     {
       projectSlug: () =>
         p.text({
           message: '项目名称 (slug)',
-          placeholder: 'order-center',
+          initialValue: defaultSlug,
+          placeholder: defaultSlug,
           validate: (v) => {
             if (!v) return '必填';
             if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(v))
@@ -30,7 +61,7 @@ export async function collectInputs() {
       moduleBase: () =>
         p.text({
           message: 'Go module 路径',
-          placeholder: 'github.com/acme/order-center',
+          placeholder: `github.com/acme/${defaultSlug}`,
           validate: (v) => {
             if (!v) return '必填';
             if (!v.includes('/')) return '需要完整路径 (如 github.com/org/repo)';
@@ -89,7 +120,6 @@ export async function collectInputs() {
   const backendModule = `${moduleBase}/backend`;
   const shortDescription = `${displayName} backend service`;
 
-  // 确认推导结果
   p.note(
     [
       `${pc.cyan('App Name')}:         ${appName}`,

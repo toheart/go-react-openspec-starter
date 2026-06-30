@@ -1,11 +1,11 @@
-import { writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 /**
- * 注入 OpenSpec config.yaml 的项目上下文
+ * 注入生成项目的 OpenSpec 上下文。
  */
-export async function injectOpenSpecContext(repoRoot, inputs) {
-  const configPath = resolve(repoRoot, "openspec/config.yaml");
+export async function injectOpenSpecContext(targetDir, inputs) {
+  const configPath = resolve(targetDir, 'openspec/config.yaml');
 
   const content = `schema: spec-driven
 
@@ -31,5 +31,5 @@ rules:
     - After all tasks are completed, update docs/ubiquitous-language.md with the new/changed terms from the proposal
 `;
 
-  await writeFile(configPath, content, "utf-8");
+  await writeFile(configPath, content, 'utf-8');
 }

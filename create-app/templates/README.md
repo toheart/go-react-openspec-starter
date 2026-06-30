@@ -1,32 +1,14 @@
-# create-go-react-app
+# {{DISPLAY_NAME}}
 
-Go + React 全栈项目脚手架 CLI，集成 DDD 分层架构、OpenSpec 规范驱动和 AI Pipeline 编排。
+Go + React 全栈项目，基于 DDD 分层架构、OpenSpec 规范驱动和 AI Pipeline 编排。
 
-## 使用方式
-
-首次使用前，配置 GitHub Packages registry（一次性操作）：
+## Quick Start
 
 ```bash
-npm config set @toheart:registry https://npm.pkg.github.com
+make dev    # 启动 backend(:8080) + frontend(:3000)
 ```
 
-然后创建项目：
-
-```bash
-npx @toheart/create-go-react-app my-project
-cd my-project
-make dev
-```
-
-交互式 CLI 会引导你完成：
-
-1. **项目名称** + **Go module 路径**（2 个必填项）
-2. **AI IDE 选择**（Cursor / Claude Code / Codex）
-3. **流水线模板**（全栈 / 纯后端 / 热修复）
-
-其余配置自动推导，一步到位。
-
-## 生成的项目包含
+## What You Get
 
 - **Go 后端**：Cobra CLI + Gin HTTP + Viper 配置 + `log/slog` 日志，DDD 四层分层
 - **React 前端**：TypeScript + Vite，共享 API Service 层
@@ -35,10 +17,9 @@ make dev
 - **CI/CD**：GitHub Actions 流水线
 - **容器化**：Dockerfile + docker-compose
 
-## 生成的项目结构
+## Structure
 
 ```
-my-project/
 ├── Makefile                          # make dev / check
 ├── docker-compose.yml
 ├── backend/
@@ -63,11 +44,21 @@ my-project/
 │   │   └── types/
 │   └── vite.config.ts
 ├── openspec/
-│   ├── config.yaml                   # 项目上下文（init 自动注入）
+│   ├── config.yaml                   # 项目上下文
 │   ├── specs/                        # 工程规范
 │   └── changes/_example/             # 格式示例
 └── .github/workflows/ci.yml
 ```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `make dev` | 启动前后端开发服务器 |
+| `make check` | 运行 lint + test + build |
+| `make pipeline-serve` | 启动 Pipeline Dashboard |
+| `make pipeline-status` | 查看 Pipeline 状态 |
+| `make clean` | 清理构建产物 |
 
 ## Pipeline Templates
 
@@ -77,22 +68,27 @@ my-project/
 | `backend-only` | propose → review → **Gate** → implement → code-review → **Gate** → test → archive |
 | `hotfix` | implement → code-review → **Gate** → test → archive |
 
-## 开发此 CLI
+## OpenSpec Workflow
+
+```
+# 提出变更
+→ AI 在 openspec/changes/{id}/ 下生成 proposal.md + tasks.md
+
+# 实现变更
+→ AI 按 tasks.md 逐项实现
+
+# 归档变更
+→ 合并 spec delta，移至 archive/
+```
+
+示例格式见 `openspec/changes/_example/`。
+
+## Docker
 
 ```bash
-# 克隆仓库
-git clone https://github.com/toheart/go-react-openspec-starter.git
-cd go-react-openspec-starter
-
-# 安装依赖
-cd create-app && npm install && cd ..
-
-# 本地测试
-make dev          # 创建 test-project/ 进行测试
-
-# 发布（打 tag 后 GitHub Actions 自动发布到 GitHub Packages）
-git tag v1.0.0
-git push origin v1.0.0
+docker compose up --build
+# backend → localhost:8080
+# frontend → localhost:3000
 ```
 
 ## License

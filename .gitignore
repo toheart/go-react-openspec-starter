@@ -1,14 +1,12 @@
-# Workspace ignores
-/backend/bin/
-/backend/cmd.exe
-/frontend/dist/
-/frontend/node_modules/
+# Dependencies
 /create-app/node_modules/
 /create-app/npm-cache/
-/.tmpbin/
-/.pipeline/
 /node_modules/
 /npm-cache/
+
+# Test output
+/test-project/
+/.tmpbin/
 
 # Logs and temp
 *.log
@@ -22,6 +20,11 @@
 .DS_Store
 Thumbs.db
 
-# OpenSpec active changes (keep _example)
-/openspec/changes/*/
-!/openspec/changes/_example/
+# Template build artifacts (not tracked)
+/create-app/templates/frontend/node_modules/
+/create-app/templates/frontend/dist/
+/create-app/templates/backend/bin/
+
+# Local skill projections generated from .agents/skills
+/.cursor/skills/
+/.claude/skills/

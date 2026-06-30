@@ -1,0 +1,35 @@
+# Backend
+/backend/bin/
+/backend/cmd.exe
+
+# Frontend
+/frontend/dist/
+/frontend/node_modules/
+
+# Pipeline
+/.pipeline/
+/.tmpbin/
+
+# Dependencies
+/node_modules/
+/npm-cache/
+
+# Logs and temp
+*.log
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OpenSpec active changes (keep _example)
+/openspec/changes/*/
+!/openspec/changes/_example/
+
+# Local skill projections generated from .agents/skills
+/.cursor/skills/
+/.claude/skills/
